@@ -88,9 +88,9 @@ class FindSourceTest(DjangoPluginTestCase):
         text = self.run_django_coverage(name="main.html")
         self.assertEqual(text, "Hello")
 
-        self.assert_measured_files("main.html", "static{}changelog.txt".format(os.sep))
+        self.assert_measured_files("main.html", f"static{os.sep}changelog.txt")
         self.assert_analysis([1], name="main.html")
-        with self.assertRaisesRegexp(NoSource, r"changelog.txt.*invalid start byte"):
+        with self.assertRaisesRegex(NoSource, r"changelog.txt.*invalid start byte"):
             self.cov.html_report()
 
     def test_non_utf8_omitted(self):
@@ -110,7 +110,7 @@ class FindSourceTest(DjangoPluginTestCase):
         text = self.run_django_coverage(name="main.html")
         self.assertEqual(text, "Hello")
 
-        self.assert_measured_files("main.html", "static{}changelog.txt".format(os.sep))
+        self.assert_measured_files("main.html", f"static{os.sep}changelog.txt")
         self.assert_analysis([1], name="main.html")
         self.cov.html_report()
 
@@ -131,9 +131,14 @@ class FindSourceTest(DjangoPluginTestCase):
         text = self.run_django_coverage(name="main.html")
         self.assertEqual(text, "Hello")
 
-        self.assert_measured_files("main.html", "static{}changelog.txt".format(os.sep))
+        self.assert_measured_files("main.html", f"static{os.sep}changelog.txt")
         self.assert_analysis([1], name="main.html")
-        self.cov.html_report()
+        warn_msg = (
+            "'utf-8' codec can't decode byte 0xf6 in position 2: " +
+            "invalid start byte (couldnt-parse)"
+        )
+        with self.assert_coverage_warnings(warn_msg, min_cov=(6, 0)):
+            self.cov.html_report()
 
     def test_htmlcov_isnt_measured(self):
         # We used to find the HTML report and think it was template files.

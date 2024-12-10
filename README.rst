@@ -1,6 +1,13 @@
+==================================
+Django Template Coverage.py Plugin
+==================================
+
+A `coverage.py`_ plugin to measure test coverage of Django templates.
+
 .. start-badges
 
-|status| |kit| |license| |versions| |djversions|
+| |status| |kit| |license|
+| |versions| |djversions|
 
 .. |status| image:: https://img.shields.io/pypi/status/django_coverage_plugin.svg
     :target: https://pypi.python.org/pypi/django_coverage_plugin
@@ -14,27 +21,25 @@
 .. |versions| image:: https://img.shields.io/pypi/pyversions/django_coverage_plugin.svg
     :target: https://pypi.python.org/pypi/django_coverage_plugin
     :alt: Supported Python Versions
-.. |djversions| image:: https://img.shields.io/badge/Django-1.8%20%7C%201.11%20%7C%202.0%20%7C%202.1%20%7C%202.2%20%7C%203.0-44b78b.svg
+.. |djversions| image:: https://img.shields.io/badge/Django-1.8%20%7C%201.11%20%7C%202.2%20%7C%203.2%20%7C%204.1-44b78b.svg
     :target: https://pypi.python.org/pypi/django_coverage_plugin
     :alt: Supported Django Versions
 
+------------------
+
 .. end-badges
 
-==================================
-Django Template Coverage.py Plugin
-==================================
+Supported on:
 
-A `coverage.py`_ plugin to measure test coverage of Django templates.
+- Python: 3.8 through 3.12.
 
-Supported Python versions: 2.7, and 3.6 through 3.10.
+- Django: 2.x, 3.x and 4.x.
 
-Supported Django versions: 1.8, 1.11, 2.x, 3.x and 4.x.
-
-Supported coverage.py versions: 4.x or higher.
+- Coverage.py: 6.x or higher.
 
 The plugin is pip installable::
 
-    $ pip install django_coverage_plugin
+    $ python3 -m pip install django_coverage_plugin
 
 To run it, add this setting to your ``.coveragerc`` file::
 
@@ -123,7 +128,7 @@ Tests
 
 To run the tests::
 
-    $ pip install -r requirements.txt
+    $ python3 -m pip install -r requirements.txt
     $ tox
 
 
@@ -132,10 +137,29 @@ History
 
 .. scriv-insert-here
 
+v3.1.0 — 2023-07-10
+-------------------
+
+Dropped support for Python 3.7 and Django 1.x.  Declared support for Python
+3.12.
+
+
+v3.0.0 — 2022-12-06
+-------------------
+
+Dropped support for Python 2.7, Python 3.6, and Django 1.8.
+
+
+v2.0.4 — 2022-10-31
+-------------------
+
+Declare our support for Python 3.11 and Django 4.1.
+
+
 v2.0.3 — 2022-05-04
 -------------------
 
-Add support for Django 4.0
+Add support for Django 4.0.
 
 
 v2.0.2 — 2021-11-11
@@ -224,6 +248,7 @@ v1.4.2 — 2017-02-06
 Fixes another instance of `issue 32`_, which was the result of an
 initialization order problem.
 
+.. _issue 32: https://github.com/nedbat/django_coverage_plugin/issues/32
 
 
 v1.4.1 — 2017-01-25
@@ -231,9 +256,6 @@ v1.4.1 — 2017-01-25
 
 Fixes `issue 32`_, which was the result of an initialization order
 problem.
-
-.. _issue 32: https://github.com/nedbat/django_coverage_plugin/issues/32
-
 
 
 v1.4 — 2017-01-16

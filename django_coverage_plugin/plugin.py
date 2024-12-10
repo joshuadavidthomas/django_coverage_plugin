@@ -3,8 +3,6 @@
 
 """The Django template coverage plugin."""
 
-from __future__ import print_function
-
 import os.path
 import re
 
@@ -19,7 +17,6 @@ import django.template
 from django.template.base import Lexer, NodeList, Template, TextNode
 from django.template.defaulttags import VerbatimNode
 from django.templatetags.i18n import BlockTranslateNode
-from six.moves import range
 
 try:
     from django.template.base import TokenType
@@ -99,39 +96,28 @@ def check_debug():
     return True
 
 
-if django.VERSION < (1, 8):
-    raise RuntimeError("Django Coverage Plugin requires Django 1.8 or higher")
+if django.VERSION < (2, 0):
+    raise RuntimeError("Django Coverage Plugin requires Django 2.x or higher")
 
 
-if django.VERSION >= (1, 9):
-    # Since we are grabbing at internal details, we have to adapt as they
-    # change over versions.
-    def filename_for_frame(frame):
-        try:
-            return frame.f_locals["self"].origin.name
-        except (KeyError, AttributeError):
-            return None
+# Since we are grabbing at internal details, we have to adapt as they
+# change over versions.
+def filename_for_frame(frame):
+    try:
+        return frame.f_locals["self"].origin.name
+    except (KeyError, AttributeError):
+        return None
 
-    def position_for_node(node):
-        try:
-            return node.token.position
-        except AttributeError:
-            return None
 
-    def position_for_token(token):
-        return token.position
-else:
-    def filename_for_frame(frame):
-        try:
-            return frame.f_locals["self"].source[0].name
-        except (KeyError, AttributeError, IndexError):
-            return None
+def position_for_node(node):
+    try:
+        return node.token.position
+    except AttributeError:
+        return None
 
-    def position_for_node(node):
-        return node.source[1]
 
-    def position_for_token(token):
-        return token.source[1]
+def position_for_token(token):
+    return token.position
 
 
 def read_template_source(filename):
@@ -178,7 +164,7 @@ class DjangoTemplatePlugin(
         return [
             ("django_template_dir", self.django_template_dir),
             ("environment", sorted(
-                ("%s = %s" % (k, v))
+                ("{} = {}".format(k, v))
                 for k, v in os.environ.items()
                 if "DJANGO" in k
             )),
@@ -252,7 +238,7 @@ class DjangoTemplatePlugin(
             return -1, -1
 
         if SHOW_TRACING:
-            print("{!r}: {}".format(render_self, position))
+            print(f"{render_self!r}: {position}")
         s_start, s_end = position
         if isinstance(render_self, TextNode):
             first_line = render_self.s.splitlines(True)[0]
@@ -307,7 +293,7 @@ class DjangoTemplatePlugin(
 
 class FileReporter(coverage.plugin.FileReporter):
     def __init__(self, filename):
-        super(FileReporter, self).__init__(filename)
+        super().__init__(filename)
         # TODO: html filenames are absolute.
 
         self._source = None
@@ -316,20 +302,17 @@ class FileReporter(coverage.plugin.FileReporter):
         if self._source is None:
             try:
                 self._source = read_template_source(self.filename)
-            except (IOError, UnicodeError) as exc:
-                raise NoSource("Couldn't read {}: {}".format(self.filename, exc))
+            except (OSError, UnicodeError) as exc:
+                raise NoSource(f"Couldn't read {self.filename}: {exc}")
         return self._source
 
     def lines(self):
         source_lines = set()
 
         if SHOW_PARSING:
-            print("-------------- {}".format(self.filename))
+            print(f"-------------- {self.filename}")
 
-        if django.VERSION >= (1, 9):
-            lexer = Lexer(self.source())
-        else:
-            lexer = Lexer(self.source(), self.filename)
+        lexer = Lexer(self.source())
         tokens = lexer.tokenize()
 
         # Are we inside a comment?
@@ -402,7 +385,7 @@ class FileReporter(coverage.plugin.FileReporter):
                 source_lines.update(range(lineno, lineno+num_lines))
 
             if SHOW_PARSING:
-                print("\t\t\tNow source_lines is: {!r}".format(source_lines))
+                print(f"\t\t\tNow source_lines is: {source_lines!r}")
 
         return source_lines
 
