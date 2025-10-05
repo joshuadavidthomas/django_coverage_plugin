@@ -41,8 +41,8 @@ _install_e:
 
 tag: _install_e				## Make a git tag with the version number.
 	@export VER="$$(python -c "import django_coverage_plugin as me; print(me.__version__)")" && \
-	echo git tag -s -m "Version v$$VER" v$$VER
-	echo git push --all
+	git tag -s -m "Version v$$VER" v$$VER
+	git push --all
 
 ghrelease:				## Make a GitHub release for the latest version.
 	python -m scriv github-release
